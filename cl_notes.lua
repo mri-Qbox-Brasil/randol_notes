@@ -29,24 +29,24 @@ local function manageNotes(data, noteid)
     local manageNotes = 'manage_notes'
     local notes_manage = {
         id = manageNotes,
-        title = 'Manage Notes',
+        title = "Gerenciar Notas",
         onExit = function()
             closeNotepad()
         end,
         options = {
             {
-                title = 'Delete Note',
-                description = ('Delete note #%s'):format(data.id),
-                icon = 'fa-solid fa-trash',
+                title = "Excluir Nota",
+                description = ('Excluir Nota"'):format(data.id),
+                icon = "fa-solid fa-trash",
                 onSelect = function()
                     TriggerServerEvent('randol_notes:server:deleteNote', data, noteid)
                     closeNotepad()
                 end,
             },
             {
-                title = 'Rip Out Note',
-                description = ('Rip out note #%s and give to someone.'):format(data.id),
-                icon = 'fa-solid fa-trash',
+                title = "Destacar Nota",
+                description = ('Destacart nota #%s e dar para alguém.'):format(data.id),
+                icon = "fa-solid fa-trash",
                 onSelect = function()
                     TriggerServerEvent('randol_notes:server:ripNote', data, noteid)
                     closeNotepad()
@@ -61,26 +61,26 @@ end
 local function notepadTask(task, noteid)
     if task == 'view' then
         local data = lib.callback.await('randol_notes:server:getNotes', false, noteid)
-        local viewNotes = {}
-        for i = 1, #data do
-            local v = data[i]
-            local test = v.text
+            local viewNotes = {}
+            for i = 1, #data do
+                local v = data[i]
+                local test = v.text
             if string.len(v.text) > 10 then test = string.sub(v.text, 1, 10) .. '..' end
-            local signed = (v.signed and 'Signed') or 'Unsigned'
-            viewNotes[#viewNotes+1] = {
-                title = test,
+            local signed = (v.signed and 'Assinado') or 'Anônimo'
+                viewNotes[#viewNotes+1] = {
+                    title = test,
                 description = ('%s [%s]'):format(v.date, signed),
                 icon = 'fa-solid fa-note-sticky',
-                onSelect = function()
+                    onSelect = function()
                     manageNotes(v, noteid)
-                end,
-                metadata = {
-                    {label = 'Note', value = v.text},
-                },
-            }
-        end
-        lib.registerContext({ id = 'noteMenu2', title = 'Saved Notes', onExit = function() closeNotepad() end, options = viewNotes })
-        lib.showContext('noteMenu2')
+                    end,
+                    metadata = {
+                        {label = 'Nota', value = v.text},
+                    },
+                }
+            end
+            lib.registerContext({ id = 'noteMenu2', title = 'Notas Salvas', onExit = function() closeNotepad() end, options = viewNotes })
+            lib.showContext('noteMenu2')
     elseif task == 'new' then
         local input = lib.inputDialog('New Note', {
             {
@@ -108,20 +108,20 @@ local function openNotepad(noteid)
     local some_id = 'notepadinit'
     local notepadMenu = {
         id = some_id,
-        title = 'Notebook',
+        title = 'Bloco de Notas',
         onExit = function() closeNotepad() end,
         options = {
             {
-                title = 'My Notes',
-                description = 'View my notes.',
+                title = 'Minhas anotações',
+                description = 'Veja minhas anotações.',
                 icon = 'fa-solid fa-note-sticky',
                 onSelect = function()
                     notepadTask('view', noteid)
                 end,
             },
             {
-                title = 'New Note',
-                description = 'Write a new note to save.',
+                title = 'Nova nota',
+                description = 'Escreva uma nova nota para salvar.',
                 icon = 'fa-solid fa-pencil',
                 onSelect = function()
                     notepadTask('new', noteid)
